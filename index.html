@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>不開心水族箱</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -22,6 +23,44 @@
             color: #1e90ff;
             text-align: center;
         }
+        .aquarium {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(180deg, #a6d8ff 0%, #1e90ff 100%);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .animal {
+            position: absolute;
+            font-size: 30px;
+            color: white;
+        }
+
+        @keyframes swim {
+            0% {
+                transform: translateX(-100%) translateY(0);
+            }
+            25% {
+                transform: translateX(25%) translateY(50px) scaleX(1);
+            }
+            50% {
+                transform: translateX(50%) translateY(-30px) scaleX(-1);
+            }
+            75% {
+                transform: translateX(75%) translateY(20px) scaleX(1);
+            }
+            100% {
+                transform: translateX(100vw) translateY(0);
+            }
+        }
+
+        .swim-path-1 { animation: swim 15s linear infinite; }
+        .swim-path-2 { animation: swim 12s linear infinite; }
+        .swim-path-3 { animation: swim 18s linear infinite; }
+
         .game-area {
             margin: 20px 0;
             padding: 20px;
@@ -70,11 +109,11 @@
                 <li>系統會生成五個 0-5 的隨機數字</li>
                 <li>您需要輸入五個數字（1-5）代表不同的海洋動物：
                     <ul>
-                        <li>1 = 鯨魚</li>
-                        <li>2 = 鯊魚</li>
-                        <li>3 = 小丑魚</li>
-                        <li>4 = 旗魚</li>
-                        <li>5 = 熊貓</li>
+                        <li>1 = 鯨魚 <i class="fas fa-whale"></i></li>
+                        <li>2 = 鯊魚 <i class="fas fa-fish"></i></li>
+                        <li>3 = 小丑魚 <i class="fas fa-fish fa-sm"></i></li>
+                        <li>4 = 旗魚 <i class="fas fa-fish fa-lg"></i></li>
+                        <li>5 = 熊貓 <i class="fas fa-paw"></i></li>
                     </ul>
                 </li>
             </ul>
@@ -88,17 +127,18 @@
                 <button onclick="checkNumbers()">確認</button>
             </div>
             
+            <div class="aquarium" id="aquarium"></div>
             <div id="result"></div>
         </div>
     </div>
 
     <script>
         const ANIMALS = {
-            1: "鯨魚",
-            2: "鯊魚",
-            3: "小丑魚",
-            4: "旗魚",
-            5: "熊貓"
+            1: {name: "鯨魚", icon: "fas fa-whale"},
+            2: {name: "鯊魚", icon: "fas fa-fish"},
+            3: {name: "小丑魚", icon: "fas fa-fish fa-sm"},
+            4: {name: "旗魚", icon: "fas fa-fish fa-lg"},
+            5: {name: "熊貓", icon: "fas fa-paw"}
         };
         
         let currentNumbers = [];
@@ -108,6 +148,30 @@
             document.getElementById('randomNumbers').textContent = currentNumbers.join('');
             document.getElementById('result').textContent = '';
             document.getElementById('playerInput').value = '';
+            clearAquarium();
+        }
+
+        function createAnimal(type, count) {
+            const aquarium = document.getElementById('aquarium');
+            
+            for (let i = 0; i < count; i++) {
+                const animal = document.createElement('div');
+                animal.className = `animal swim-path-${(i % 3) + 1}`;
+                
+                const icon = document.createElement('i');
+                icon.className = ANIMALS[type].icon;
+                animal.appendChild(icon);
+                
+                animal.style.top = `${Math.random() * 70}%`;
+                animal.style.animationDelay = `${Math.random() * 5}s`;
+                
+                aquarium.appendChild(animal);
+            }
+        }
+
+        function clearAquarium() {
+            const aquarium = document.getElementById('aquarium');
+            aquarium.innerHTML = '';
         }
 
         function checkNumbers() {
@@ -119,10 +183,13 @@
 
             const playerNumbers = input.split('').map(Number);
             const result = [];
+            
+            clearAquarium();
 
             for (let i = 0; i < 5; i++) {
                 if (currentNumbers[i] > 0) {
-                    result.push(`${currentNumbers[i]}隻${ANIMALS[playerNumbers[i]]}`);
+                    result.push(`${currentNumbers[i]}隻${ANIMALS[playerNumbers[i]].name}`);
+                    createAnimal(playerNumbers[i], currentNumbers[i]);
                 }
             }
 
