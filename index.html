@@ -22,18 +22,116 @@
             color: #1e90ff;
             text-align: center;
         }
+        .game-area {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #e6f3ff;
+            border-radius: 5px;
+        }
+        .random-numbers {
+            font-size: 24px;
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+        }
+        input {
+            width: 200px;
+            padding: 10px;
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        button {
+            background-color: #1e90ff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #187bcd;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            font-size: 18px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>不開心水族箱</h1>
-        <p>歡迎來到不開心水族箱！</p>
-        <p>這是一個簡單的遊戲，您可以在這裡：</p>
-        <ul>
-            <li>觀看隨機生成的五個數字（0-5）</li>
-            <li>輸入五個數字（1-5）代表不同的海洋動物</li>
-            <li>看看您的水族箱裡會有什麼動物！</li>
-        </ul>
+        <div class="game-area">
+            <h2>遊戲規則：</h2>
+            <ul>
+                <li>系統會生成五個 0-5 的隨機數字</li>
+                <li>您需要輸入五個數字（1-5）代表不同的海洋動物：
+                    <ul>
+                        <li>1 = 鯨魚</li>
+                        <li>2 = 鯊魚</li>
+                        <li>3 = 小丑魚</li>
+                        <li>4 = 旗魚</li>
+                        <li>5 = 熊貓</li>
+                    </ul>
+                </li>
+            </ul>
+            
+            <div class="random-numbers" id="randomNumbers"></div>
+            
+            <div style="text-align: center;">
+                <input type="text" id="playerInput" maxlength="5" placeholder="請輸入五個數字(1-5)">
+                <br>
+                <button onclick="generateNumbers()">生成新數字</button>
+                <button onclick="checkNumbers()">確認</button>
+            </div>
+            
+            <div id="result"></div>
+        </div>
     </div>
+
+    <script>
+        const ANIMALS = {
+            1: "鯨魚",
+            2: "鯊魚",
+            3: "小丑魚",
+            4: "旗魚",
+            5: "熊貓"
+        };
+        
+        let currentNumbers = [];
+
+        function generateNumbers() {
+            currentNumbers = Array.from({length: 5}, () => Math.floor(Math.random() * 6));
+            document.getElementById('randomNumbers').textContent = currentNumbers.join('');
+            document.getElementById('result').textContent = '';
+            document.getElementById('playerInput').value = '';
+        }
+
+        function checkNumbers() {
+            const input = document.getElementById('playerInput').value;
+            if (!/^[1-5]{5}$/.test(input)) {
+                alert('請輸入5個1-5之間的數字！');
+                return;
+            }
+
+            const playerNumbers = input.split('').map(Number);
+            const result = [];
+
+            for (let i = 0; i < 5; i++) {
+                if (currentNumbers[i] > 0) {
+                    result.push(`${currentNumbers[i]}隻${ANIMALS[playerNumbers[i]]}`);
+                }
+            }
+
+            document.getElementById('result').textContent = 
+                result.join('、') + '在水族箱裡游來游去。';
+        }
+
+        // 頁面載入時自動生成第一組數字
+        generateNumbers();
+    </script>
 </body>
 </html> 
